@@ -1,7 +1,7 @@
 {
-  "name": "clipper-mom-breaker",
+  "name": "flash-killer-keeper",
   "version": "1.0.0",
-  "description": "Checks if we can call the clipper-mom.tripBreaker().",
+  "description": "Checks if we can call the FlashKiller.kill().",
   "main": "index.js",
   "scripts": {
     "start" : "node ./index.js",
