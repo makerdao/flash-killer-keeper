@@ -1,0 +1,16 @@
+{
+  "name": "clipper-mom-breaker",
+  "version": "1.0.0",
+  "description": "Checks if we can call the clipper-mom.tripBreaker().",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "AGPL3.0",
+  "dependencies": {
+    "ethers": "^5.4.7",
+    "node-fetch": "^2.6.1"
+  }
+}
