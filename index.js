@@ -3,8 +3,8 @@ const fetch = require('node-fetch');
 const ethers = require("ethers");
 
 // configuration
-// const WS_RPC              = 'http://127.0.0.1:8545/';
-const WS_RPC              = 'ws://192.168.1.111:8546/';
+const WS_RPC              = 'http://127.0.0.1:8545/';
+// const WS_RPC              = 'ws://192.168.1.111:8546/';
 const CHAINLOG            = "0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F";
 const MAX_GAS_LIMIT       = ethers.utils.parseUnits('10000000', 'wei');
 const GAS_BUMP            = ethers.utils.parseUnits('200000', 'wei');
@@ -27,9 +27,20 @@ const chainLogABI = JSON.parse(fs.readFileSync('./abi/ChainLog.abi').toString())
 const chainlog = new ethers.Contract(CHAINLOG, chainLogABI, signer);
 
 const flashKillerABI = JSON.parse(fs.readFileSync('./abi/FlashKiller.abi').toString());
+const flashMintABI = JSON.parse(fs.readFileSync('./abi/FlashMint.abi').toString());
 
 async function checkFlashKiller(flashKiller, _overrides) {
   try {
+    const flashAddress = await flashKiller.flash();
+    const flashMint = new ethers.Contract(flashAddress, flashMintABI, signer);
+
+    const max = await flashMint.max();
+
+    if (max.eq(0)) {
+      console.log("FlashMint already disabled.");
+      return;
+    }
+
     _overrides.gasLimit = await flashKiller.estimateGas.kill(_overrides);
 
     if (_overrides.gasLimit.gt(MAX_GAS_LIMIT)) {
@@ -37,17 +48,13 @@ async function checkFlashKiller(flashKiller, _overrides) {
         'checkFlashKiller: gasLimit too high: ' +
           _overrides.gasLimit + ' > ' + MAX_GAS_LIMIT
       );
-      continue;
+      return;
     }
 
-    // dry run, if this would error, we would go to catch block
     await flashKiller.callStatic.kill(_overrides);
 
     // everything beyond here is a real call
-    console.log(
-      'checkFlashKiller: flashKiller.kill(' + killerAddress + ') ' +
-      'for ' + key
-    );
+    console.log('checkFlashKiller: flashKiller.kill()');
     const tx = await flashKiller.kill(_overrides);
     console.log(tx);
     const receipt = await tx.wait();
@@ -55,7 +62,7 @@ async function checkFlashKiller(flashKiller, _overrides) {
   } catch (err) {
     // standard path lands here, uncomment to debug
     // console.error(err);
-    continue;
+    return;
   }
 }
 
