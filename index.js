@@ -1,24 +1,27 @@
 const fs = require('fs');
-const fetch = require('node-fetch');
 const ethers = require("ethers");
 
+//
 // configuration
+//
+// use for simulation testing (hardhat)
 const WS_RPC              = 'http://127.0.0.1:8545/';
+const provider = new ethers.providers.WebSocketProvider(WS_RPC);
+// use running on mainnet (RPC)
 // const WS_RPC              = 'ws://192.168.1.111:8546/';
+// const provider = new ethers.providers.JsonRpcProvider(WS_RPC);
 const CHAINLOG            = "0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F";
 const MAX_GAS_LIMIT       = ethers.utils.parseUnits('10000000', 'wei');
-const GAS_BUMP            = ethers.utils.parseUnits('200000', 'wei');
+const GAS                 = ethers.utils.parseUnits('1000000', 'wei');
 
 //
-// DO NOT CHANGE BELOW LINE
+// CONFIG ABOVE, DO NOT CHANGE CODE BELOW LINE
 //
 
 // block mutex
 let onBlockMutex = false;
 
 // wallet
-// const provider = new ethers.providers.JsonRpcProvider(WS_RPC);
-const provider = new ethers.providers.WebSocketProvider(WS_RPC);
 const privateKey = fs.readFileSync('./secrets/private.key');
 const signer = new ethers.Wallet(privateKey.toString('utf8'), provider);
 
@@ -99,7 +102,7 @@ async function onBlock(blockNumber) {
 
   // All overrides are optional
   let overrides = {
-      gasLimit: GAS_BUMP.mul(5)
+      gasLimit: GAS
   };
 
   await checkFlashKiller(flashKiller, overrides);
