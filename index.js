@@ -5,11 +5,11 @@ const ethers = require("ethers");
 // configuration
 //
 // use for simulation testing (hardhat)
-const WS_RPC              = 'http://127.0.0.1:8545/';
-const provider = new ethers.providers.WebSocketProvider(WS_RPC);
+const RPC                 = 'http://127.0.0.1:8545/';
+const provider            = new ethers.providers.JsonRpcProvider(RPC);
 // use running on mainnet (RPC)
 // const WS_RPC              = 'ws://192.168.1.111:8546/';
-// const provider = new ethers.providers.JsonRpcProvider(WS_RPC);
+// const provider            = new ethers.providers.WebSocketProvider(WS_RPC);
 const CHAINLOG            = "0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F";
 const MAX_GAS_LIMIT       = ethers.utils.parseUnits('10000000', 'wei');
 const GAS                 = ethers.utils.parseUnits('1000000', 'wei');
